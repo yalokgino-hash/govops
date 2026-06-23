@@ -74,7 +74,16 @@ export default function SignUpPage() {
         },
       })
       if (signUpError) throw signUpError
-      router.push('/auth/sign-up-success')
+
+      // Email confirmation is auto-handled, so sign in immediately for a seamless flow.
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      })
+      if (signInError) throw signInError
+
+      router.push('/dashboard')
+      router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to create account.')
     } finally {
